@@ -24,12 +24,15 @@ type GithubProvider struct {
 	options *GithubOptions
 }
 
-func NewGithubProvider(options *GithubOptions) (GithubProvider) {
-	return GithubProvider{options}
+func NewGithubProvider(options *GithubOptions) (*GithubProvider) {
+	if options.ctx == nil {
+		options.ctx = context.Background()
+	}
+	return &GithubProvider{options}
 }
 
-func (gp GithubProvider) GetLatestRelease() (*Release, error) {
-	rr, _, err := getClient(gp.options).Repositories.GetLatestRelease(context.Background(), gp.options.Owner, gp.options.Repo)
+func (gp *GithubProvider) GetLatestRelease() (*Release, error) {
+	rr, _, err := getClient(gp.options).Repositories.GetLatestRelease(gp.options.ctx, gp.options.Owner, gp.options.Repo)
 	if err != nil {
 		return nil, err
 	}
@@ -39,8 +42,8 @@ func (gp GithubProvider) GetLatestRelease() (*Release, error) {
 	}, nil
 }
 
-func (gp GithubProvider) GetBinary(release *Release) (*Release, error) {
-	ra, _, _ := getClient(gp.options).Repositories.GetReleaseAsset(context.Background(), gp.options.Owner, gp.options.Repo, release.CommitID)
+func (gp *GithubProvider) GetBinary(release *Release) (*Release, error) {
+	ra, _, _ := getClient(gp.options).Repositories.GetReleaseAsset(gp.options.ctx, gp.options.Owner, gp.options.Repo, release.CommitID)
 	release.DownloadUrl = ra.GetBrowserDownloadURL()
 	return downloadBinary(release)
 }
