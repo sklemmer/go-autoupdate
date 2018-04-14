@@ -4,9 +4,9 @@ workflows:
   version: 2
   main:
     jobs:
-      - go-current
-      - go-previous
-      - go-latest
+      - current
+      - previous
+      - latest
 base: &base
   working_directory: /go/src/github.com/sklemmer/go-autoupdate
   steps:
