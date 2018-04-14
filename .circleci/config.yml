@@ -12,6 +12,9 @@ workflows:
             - current
             - previous
             - latest
+          filters:
+            branches:
+              only: master
 base: &base
   working_directory: /go/src/github.com/sklemmer/go-autoupdate
   steps:
