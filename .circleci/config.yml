@@ -23,6 +23,6 @@ jobs:
 
       # specify any bash command here prefixed with `run: `
       #- run: go get -v -t -d ./...
-      - run: go get github.com/tools/godep
-      - run: godep restore
+      - run: curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+      - run: dep ensure
       - run: go test -v ./...
