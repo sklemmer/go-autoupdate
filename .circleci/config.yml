@@ -15,7 +15,11 @@ base: &base
     - run: dep ensure -v
     - run: go vet ./...
     - run: go test -v ./...
-    - run: go test -coverprofile=c.out ./...
+    - run:
+        command: |
+          echo 'mode: atomic' > coverage.txt
+          go list ./... | xargs -n1 -I{} sh -c 'go test -covermode=atomic -coverprofile=coverage.tmp {} && tail -n +2 coverage.tmp >> coverage.txt'
+          rm coverage.tmp
     #- store_artifacts:
     #    path: coverage/
 version: 2
@@ -26,7 +30,7 @@ jobs:
     <<: *base
   previous:
     docker:
-      - image: circleci/golang:1.9.4
+      - image: circleci/golang:1.9
     <<: *base
   latest:
     docker:
