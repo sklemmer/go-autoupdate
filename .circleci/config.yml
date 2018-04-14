@@ -1,28 +1,59 @@
 # Golang CircleCI 2.0 configuration file
 #
-# Check https://circleci.com/docs/2.0/language-go/ for more details
+workflows:
+  version: 2
+  main:
+    jobs:
+      - current
+      - previous
+      - latest
+      - docs:
+          requires:
+            - current
+            - previous
+            - latest
+          filters:
+            branches:
+              only: master
+base: &base
+  working_directory: /go/src/github.com/sklemmer/go-autoupdate
+  steps:
+    - checkout
+    - run: curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+    - run: dep ensure -v
+    - run: go vet ./...
+    - run: go test -v ./...
+    - run:
+        command: |
+          echo 'mode: atomic' > coverage.txt
+          go list ./... | xargs -n1 -I{} sh -c 'go test -covermode=atomic -coverprofile=coverage.tmp {} && tail -n +2 coverage.tmp >> coverage.txt'
+          rm coverage.tmp
+    #- store_artifacts:
+    #    path: coverage/
 version: 2
 jobs:
-  build:
+  current:
     docker:
-      # specify the version
+      - image: circleci/golang:1.10
+    <<: *base
+  previous:
+    docker:
       - image: circleci/golang:1.9
-      
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
-    #### TEMPLATE_NOTE: go expects specific checkout path representing url
-    #### expecting it in the form of
-    ####   /go/src/github.com/circleci/go-tool
-    ####   /go/src/bitbucket.org/circleci/go-tool
-    working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
+    <<: *base
+  latest:
+    docker:
+      - image: circleci/golang:latest
+    <<: *base
+  docs:
+    docker:
+      - image: circleci/golang:1.10
+    working_directory: /go/src/github.com/sklemmer/go-autoupdate
     steps:
       - checkout
-
-      # specify any bash command here prefixed with `run: `
-      #- run: go get -v -t -d ./...
-      - run: go get github.com/tools/godep
-      - run: godep restore
-      - run: go test -v ./...
+      - run: go get github.com/davecheney/godoc2md
+      - run:
+          command: |
+            mkdir -p /go/src/github.com/sklemmer/go-autoupdate/docs
+            godoc2md github.com/sklemmer/go-autoupdate > /go/src/github.com/sklemmer/go-autoupdate/docs/README.md
+      - store_artifacts:
+          path: docs/
