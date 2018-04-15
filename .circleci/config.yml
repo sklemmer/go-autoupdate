@@ -7,11 +7,14 @@ workflows:
       - current
       - previous
       - latest
-      - docs:
+      - junit:
           requires:
             - current
             - previous
             - latest
+      - docs:
+          requires:
+            - junit
           filters:
             branches:
               only: master
@@ -28,15 +31,6 @@ base: &base
           echo 'mode: atomic' > coverage.txt
           go list ./... | xargs -n1 -I{} sh -c 'go test -covermode=atomic -coverprofile=coverage.tmp {} && tail -n +2 coverage.tmp >> coverage.txt'
           rm coverage.tmp
-    - run:
-        command: |
-          mkdir -p ~/reports
-          go get -u github.com/jstemmer/go-junit-report
-          go test -v ./... 2>&1 | go-junit-report > ~/reports/junit.xml
-    - store_test_results:
-        path: ~/reports
-    - store_artifacts:
-        path: ~/reports
 version: 2
 jobs:
   current:
@@ -51,6 +45,21 @@ jobs:
     docker:
       - image: circleci/golang:latest
     <<: *base
+  junit-report:
+    docker:
+      - image: circleci/golang:1.9
+     working_directory: /go/src/github.com/sklemmer/go-autoupdate
+     steps:
+       - checkout
+       - run:
+           command: |
+             mkdir -p ~/reports
+             go get -u github.com/jstemmer/go-junit-report
+             go test -v ./... 2>&1 | go-junit-report > ~/reports/junit.xml
+       - store_test_results:
+           path: ~/reports
+       - store_artifacts:
+           path: ~/reports
   docs:
     docker:
       - image: circleci/golang:1.10
