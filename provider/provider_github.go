@@ -48,7 +48,7 @@ func (gp *GithubProvider) GetLatestRelease() (*Release, error) {
 	}, nil
 }
 
-func (gp *GithubProvider) GetBinary(release *Release) (*Release, error) {
+func (gp *GithubProvider) GetBinary(release *Release) error {
 	ra, _, _ := getClient(gp.options).Repositories.GetReleaseAsset(context.TODO(), gp.options.Owner, gp.options.Repo, release.CommitID)
 	release.DownloadUrl = ra.GetBrowserDownloadURL()
 	return downloadBinary(release)

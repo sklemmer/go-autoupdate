@@ -18,9 +18,9 @@ var (
 	errNoDownloadUrlFound = errors.New("could not find any downloads")
 )
 
-func downloadBinary(release *Release) (*Release, error) {
+func downloadBinary(release *Release) error {
 	if release.DownloadUrl == "" {
-		return nil, errNoDownloadUrlFound
+		return errNoDownloadUrlFound
 	}
 
 	fileName := nameFromDownloadUrl(release.DownloadUrl)
@@ -29,25 +29,25 @@ func downloadBinary(release *Release) (*Release, error) {
 	// TODO: check file existence first with io.IsExist
 	output, err := os.Create(fileName)
 	if err != nil {
-		return nil, fmt.Errorf(errOsCreateText, fileName, err)
+		return fmt.Errorf(errOsCreateText, fileName, err)
 	}
 	defer output.Close()
 
 	response, err := http.Get(release.DownloadUrl)
 	if err != nil {
-		return nil, fmt.Errorf(errDownloadText, release.DownloadUrl, err)
+		return fmt.Errorf(errDownloadText, release.DownloadUrl, err)
 	}
 	defer response.Body.Close()
 
 	n, err := io.Copy(output, response.Body)
 	if err != nil {
-		return nil, fmt.Errorf(errDownloadText, release.DownloadUrl, err)
+		return fmt.Errorf(errDownloadText, release.DownloadUrl, err)
 	}
 
 	release.Location = fileName
 
 	fmt.Println(n, "bytes downloaded.")
-	return release, nil
+	return nil
 }
 
 func nameFromDownloadUrl(url string) string {
