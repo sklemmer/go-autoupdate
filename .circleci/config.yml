@@ -28,8 +28,13 @@ base: &base
           echo 'mode: atomic' > coverage.txt
           go list ./... | xargs -n1 -I{} sh -c 'go test -covermode=atomic -coverprofile=coverage.tmp {} && tail -n +2 coverage.tmp >> coverage.txt'
           rm coverage.tmp
-    #- store_artifacts:
-    #    path: coverage/
+    - run:
+        command: |
+          mkdir -p reports/
+          go get -u github.com/jstemmer/go-junit-report
+          go test -v ./... 2>&1 | go-junit-report > reports/report.xml
+    - store_test_results:
+        path: reports/
 version: 2
 jobs:
   current:
