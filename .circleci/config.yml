@@ -70,6 +70,7 @@ jobs:
               go test -v -cover -coverprofile=${f} -covermode=set $pkg | tee -a ~/reports/junit.txt
             done
             cat ~/reports/junit.txt | go-junit-report > ~/reports/junit.xml
+            rm ~/reports/junit.txt
       - store_test_results:
           path: ~/reports
       - store_artifacts:
