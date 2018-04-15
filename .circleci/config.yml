@@ -72,9 +72,9 @@ jobs:
     working_directory: /go/src/github.com/sklemmer/go-autoupdate
     steps:
       - checkout
-      - run: go get github.com/davecheney/godoc2md
       - run:
           command: |
+            go get github.com/davecheney/godoc2md
             mkdir -p /go/src/github.com/sklemmer/go-autoupdate/docs
             godoc2md github.com/sklemmer/go-autoupdate > /go/src/github.com/sklemmer/go-autoupdate/docs/README.md
       - store_artifacts:
