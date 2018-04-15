@@ -22,8 +22,10 @@ base: &base
   working_directory: /go/src/github.com/sklemmer/go-autoupdate
   steps:
     - checkout
-    - run: curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-    - run: dep ensure -v
+    - run:
+        command: |
+          curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+          dep ensure -v
     - run: go vet ./...
     - run: go test -v ./...
     - run:
@@ -51,6 +53,10 @@ jobs:
     working_directory: /go/src/github.com/sklemmer/go-autoupdate
     steps:
       - checkout
+      - run:
+          command: |
+            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+            dep ensure -v
       - run:
           command: |
             mkdir -p ~/reports
