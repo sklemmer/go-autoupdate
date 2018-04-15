@@ -4,6 +4,7 @@ import (
 	"github.com/google/go-github/github"
 	"context"
 	"net/http"
+	"strings"
 )
 
 var client *github.Client
@@ -22,6 +23,11 @@ type GithubOptions struct {
 
 type GithubProvider struct {
 	options *GithubOptions
+}
+
+func NewGithubOptions(repoStr string) (*GithubOptions) {
+	tokens := strings.Split(repoStr, "/")
+	return &GithubOptions{GitOptions: &GitOptions{Owner: tokens[0], Repo: tokens[1]}}
 }
 
 func NewGithubProvider(options *GithubOptions) (*GithubProvider) {
