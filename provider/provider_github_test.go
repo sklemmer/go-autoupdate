@@ -45,7 +45,7 @@ func TestGithubProvider_GetBinary_NoDownloads(t *testing.T) {
 	expected := &Release{Version: "0.0.1", CommitID: 10547150}
 
 	github := NewGithubProvider(NewGithubOptions("sklemmer/go-autoupdate-example"))
-	_, err := github.GetBinary(expected)
+	err := github.GetBinary(expected)
 
 	assert.Error(t, err, errNoDownloadUrlFound)
 }
