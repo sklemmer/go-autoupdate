@@ -7,14 +7,14 @@ workflows:
       - current
       - previous
       - latest
-      - junit:
+      - junit-report:
           requires:
             - current
             - previous
             - latest
       - docs:
           requires:
-            - junit
+            - junit-report
           filters:
             branches:
               only: master
