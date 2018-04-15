@@ -34,9 +34,9 @@ base: &base
           go get -u github.com/jstemmer/go-junit-report
           go test -v ./... 2>&1 | go-junit-report > ~/reports/junit.xml
     - store_test_results:
-          path: ~/reports
-      - store_artifacts:
-          path: ~/reports
+        path: ~/reports
+    - store_artifacts:
+        path: ~/reports
 version: 2
 jobs:
   current:
