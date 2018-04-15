@@ -48,18 +48,18 @@ jobs:
   junit-report:
     docker:
       - image: circleci/golang:1.9
-     working_directory: /go/src/github.com/sklemmer/go-autoupdate
-     steps:
-       - checkout
-       - run:
-           command: |
-             mkdir -p ~/reports
-             go get -u github.com/jstemmer/go-junit-report
-             go test -v ./... 2>&1 | go-junit-report > ~/reports/junit.xml
-       - store_test_results:
-           path: ~/reports
-       - store_artifacts:
-           path: ~/reports
+    working_directory: /go/src/github.com/sklemmer/go-autoupdate
+    steps:
+      - checkout
+      - run:
+          command: |
+            mkdir -p ~/reports
+            go get -u github.com/jstemmer/go-junit-report
+            go test -v ./... 2>&1 | go-junit-report > ~/reports/junit.xml
+      - store_test_results:
+          path: ~/reports
+      - store_artifacts:
+          path: ~/reports
   docs:
     docker:
       - image: circleci/golang:1.10
