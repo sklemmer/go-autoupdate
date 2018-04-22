@@ -2,8 +2,9 @@ package provider
 
 import (
 	"github.com/google/go-github/github"
-	"context"
 	"net/http"
+	"strings"
+	"context"
 )
 
 var client *github.Client
@@ -24,12 +25,20 @@ type GithubProvider struct {
 	options *GithubOptions
 }
 
-func NewGithubProvider(options *GithubOptions) (GithubProvider) {
-	return GithubProvider{options}
+func NewGithubOptions(repoStr string) (*GithubOptions) {
+	tokens := strings.Split(repoStr, "/")
+	return &GithubOptions{GitOptions: &GitOptions{Owner: tokens[0], Repo: tokens[1]}}
 }
 
-func (gp GithubProvider) GetLatestRelease() (*Release, error) {
-	rr, _, err := getClient(gp.options).Repositories.GetLatestRelease(context.Background(), gp.options.Owner, gp.options.Repo)
+func NewGithubProvider(options *GithubOptions) (*GithubProvider) {
+	//if options != nil && options.GitOptions != nil && options.GitOptions.ctx == nil {
+	//	options.GitOptions.ctx = context.TODO()
+	//}
+	return &GithubProvider{options}
+}
+
+func (gp *GithubProvider) GetLatestRelease() (*Release, error) {
+	rr, _, err := getClient(gp.options).Repositories.GetLatestRelease(context.TODO(), gp.options.Owner, gp.options.Repo)
 	if err != nil {
 		return nil, err
 	}
@@ -39,8 +48,8 @@ func (gp GithubProvider) GetLatestRelease() (*Release, error) {
 	}, nil
 }
 
-func (gp GithubProvider) GetBinary(release *Release) (*Release, error) {
-	ra, _, _ := getClient(gp.options).Repositories.GetReleaseAsset(context.Background(), gp.options.Owner, gp.options.Repo, release.CommitID)
+func (gp *GithubProvider) GetBinary(release *Release) error {
+	ra, _, _ := getClient(gp.options).Repositories.GetReleaseAsset(context.TODO(), gp.options.Owner, gp.options.Repo, release.CommitID)
 	release.DownloadUrl = ra.GetBrowserDownloadURL()
 	return downloadBinary(release)
 }
