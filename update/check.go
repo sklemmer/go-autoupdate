@@ -19,12 +19,12 @@ func (u *Updater) Check() (bool, error) {
 	}
 
 	if isNewer(release.Version, u.Version) {
-		fmt.Printf("Found new version %s, old version %s", release.Version, u.Version)
+		fmt.Printf("Found new version %s, old version %s\n", release.Version, u.Version)
 		u.release = release
 		return true, nil
 	}
 
-	fmt.Printf("Already using latest version %s", release.Version)
+	fmt.Println("Already using latest version", release.Version)
 	return false, nil
 }
 

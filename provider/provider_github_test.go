@@ -23,7 +23,7 @@ func TestNewGithubOptions(t *testing.T) {
 }
 
 func TestGithubProvider_GetLatestRelease(t *testing.T) {
-	expected := &Release{Version: "0.0.1", CommitID: 10547150}
+	expected := &Release{Version: "0.0.2", CommitID: 10663903}
 
 	github := NewGithubProvider(NewGithubOptions("sklemmer/go-autoupdate-example"))
 	release, err := github.GetLatestRelease()
@@ -32,7 +32,7 @@ func TestGithubProvider_GetLatestRelease(t *testing.T) {
 }
 
 func TestGithubProvider_GetBinary(t *testing.T) {
-	expected := &Release{Version: "0.0.1", CommitID: 10547150}
+	expected := &Release{Version: "0.0.2", CommitID: 10663903}
 
 	github := NewGithubProvider(NewGithubOptions("sklemmer/go-autoupdate-example"))
 	release, err := github.GetLatestRelease()
@@ -42,7 +42,7 @@ func TestGithubProvider_GetBinary(t *testing.T) {
 }
 
 func TestGithubProvider_GetBinary_NoDownloads(t *testing.T) {
-	expected := &Release{Version: "0.0.1", CommitID: 10547150}
+	expected := &Release{Version: "0.0.2", CommitID: 10663903}
 
 	github := NewGithubProvider(NewGithubOptions("sklemmer/go-autoupdate-example"))
 	err := github.GetBinary(expected)
