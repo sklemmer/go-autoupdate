@@ -1,6 +1,9 @@
 package update
 
-import "github.com/spf13/cobra"
+import (
+	"github.com/spf13/cobra"
+	"fmt"
+)
 
 func (u *Updater) GetUpdateCommand() (*cobra.Command) {
 	return &cobra.Command{
@@ -17,6 +20,7 @@ func (u *Updater) GetUpdateCommand() (*cobra.Command) {
 				if err := u.Update(); err != nil {
 					return err
 				}
+				fmt.Println("Version successfully updated")
 			}
 			return nil
 		},

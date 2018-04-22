@@ -3,9 +3,11 @@ package update
 import (
 	"path/filepath"
 	"os"
+	"fmt"
 )
 
 func (u *Updater) Update() (error) {
+	fmt.Println("Download newer version")
 	err := u.provider.GetBinary(u.release)
 	if err != nil {
 		return err
