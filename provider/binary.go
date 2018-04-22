@@ -11,6 +11,7 @@ import (
 
 const (
 	errOsCreateText = "error while creating %s\n%s"
+	errOsOpenText   = "error while opening %s\n%s"
 	errDownloadText = "error while downloading %s\n%s"
 )
 
@@ -26,10 +27,15 @@ func downloadBinary(release *Release) error {
 	fileName := nameFromDownloadUrl(release.DownloadUrl)
 	fmt.Println("Downloading", release.DownloadUrl, "to", fileName)
 
-	// TODO: check file existence first with io.IsExist
-	output, err := os.Create(fileName)
-	if err != nil {
-		return fmt.Errorf(errOsCreateText, fileName, err)
+	var output *os.File
+	if _, err := os.Stat(fileName); os.IsNotExist(err) {
+		if output, err = os.Create(fileName); err != nil {
+			return fmt.Errorf(errOsCreateText, fileName, err)
+		}
+	} else {
+		if output, err = os.Open(fileName); err != nil {
+			return fmt.Errorf(errOsOpenText, fileName, err)
+		}
 	}
 	defer output.Close()
 
